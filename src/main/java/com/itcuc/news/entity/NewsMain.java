@@ -34,6 +34,9 @@ public class NewsMain {
     @Column(name = "source_link")
     private String sourceLink;
 
+    @Column(name = "source_author")
+    private String sourceAuthor;
+
     @Column(name = "created_time")
     private Date createdTime;
 
