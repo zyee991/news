@@ -5,15 +5,12 @@ import com.itcuc.news.common.ResultCode;
 import com.itcuc.news.entity.UserMain;
 import com.itcuc.news.repository.UserDao;
 import com.itcuc.news.service.UserService;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.UUID;
 
@@ -25,7 +22,7 @@ public class UserServiceImpl implements UserService {
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
-    public Result create(String username, String password) {
+    public UserMain create(String username, String password) {
         String id = UUID.randomUUID().toString();
         String passwordEncode = bCryptPasswordEncoder.encode(password);
         UserMain user = new UserMain();
@@ -34,11 +31,26 @@ public class UserServiceImpl implements UserService {
         user.setUsername(username);
         user.setCreatedTime(new Date());
         UserMain userMain = userDao.save(user);
-        return Result.success(userMain);
+        return userMain;
     }
 
     @Override
-    public Result modify(UserMain userMain) {
+    public UserMain modify(UserMain userMain) {
         return null;
+    }
+
+    @Override
+    public String signin(String username, String password) {
+        UserMain user = userDao.findByUsername(username);
+        if(user.getPassword().equals(bCryptPasswordEncoder.encode(password))) {
+            String token = Jwts.builder()
+                    .setSubject(username)
+                    .setExpiration(new Date(System.currentTimeMillis() + 60 * 60 * 24 * 1000))
+                    .signWith(SignatureAlgorithm.HS512, "JwtSecret")
+                    .compact();
+            return "Bearer " + token;
+        } else {
+            return null;
+        }
     }
 }
