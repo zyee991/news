@@ -1,8 +1,8 @@
 package com.itcuc.news.rest;
 
-import com.itcuc.news.common.Result;
-import com.itcuc.news.common.ResultCode;
-import com.itcuc.news.entity.UserMain;
+import com.itcuc.common.Result;
+import com.itcuc.common.ResultCode;
+import com.itcuc.news.entity.User;
 import com.itcuc.news.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -30,7 +30,7 @@ public class UserRestController {
     })
     @PostMapping("signup")
     public Result signup(@RequestParam String username,@RequestParam String password) {
-        UserMain user = userService.create(username,password);
+        User user = userService.create(username,password);
         if(user != null) {
             return Result.success(user);
         } else {

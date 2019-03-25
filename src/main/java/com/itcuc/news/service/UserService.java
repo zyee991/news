@@ -1,10 +1,10 @@
 package com.itcuc.news.service;
 
-import com.itcuc.news.entity.UserMain;
+import com.itcuc.news.entity.User;
 
 public interface UserService {
-    UserMain create(String username,String password);
-    UserMain modify(UserMain userMain);
+    User create(String username, String password);
+    User modify(User user);
 
     String signin(String username, String password);
 }

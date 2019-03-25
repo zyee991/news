@@ -11,5 +11,14 @@ spring:
     database: mysql
     hibernate:
       ddl-auto: none
+  freemarker:
+    cache: false
+    charset: UTF-8
+    suffix: .ftl
+    prefix: /ftl/
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password:
 server:
   port: 8880
