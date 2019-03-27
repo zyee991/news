@@ -1,6 +1,7 @@
 package com.itcuc.base.entity;
 
 import lombok.Data;
+import org.hibernate.annotations.Proxy;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -30,7 +31,7 @@ public class Manager implements Serializable {
     @Column(name = "login_addr")
     private String loginAddr;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "base_manager_role", inverseJoinColumns = @JoinColumn(name = "role_id"), joinColumns = @JoinColumn(name = "manager_id"))
     private List<Role> roles;
 }

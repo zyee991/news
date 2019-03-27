@@ -14,8 +14,14 @@ public class ManagerServiceImpl implements ManagerService {
     ManagerDao managerDao;
 
     @Override
-    @Cacheable(value = "manager",key = "#p0",keyGenerator = "nKeyGenerator")
+    @Cacheable(value = "manager",key = "#p0")
     public Manager findById(String id) {
         return managerDao.findById(id).get();
+    }
+
+    @Override
+    @Cacheable(value = "managerByUsername",key = "#p0")
+    public Manager findByUsername(String username) {
+        return managerDao.findByUsername(username);
     }
 }

@@ -28,6 +28,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        http.headers().frameOptions().disable();
         http.cors().and().csrf().disable().authorizeRequests()
                 // 后台控制器
                 .antMatchers("/n/**").permitAll()

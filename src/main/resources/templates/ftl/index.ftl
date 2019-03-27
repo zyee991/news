@@ -10,8 +10,8 @@
     <meta http-equiv="Cache-Control" content="no-siteapp" />
     <link rel="stylesheet" href="/css/font.css">
 	<link rel="stylesheet" href="/css/xadmin.css">
-    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
-    <script type="text/javascript"src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+    <script type="text/javascript" src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript"src="https://cdn.staticfile.org/blueimp-md5/2.10.0/js/md5.min.js"></script>
     <script src="/lib/layui/layui.js" charset="utf-8"></script>
 
     <script type="text/javascript" src="/js/xadmin.js"></script>
@@ -310,7 +310,7 @@
           </div>
           <div class="layui-tab-content">
             <div class="layui-tab-item layui-show">
-                <iframe src='/welcome.html' frameborder="0" scrolling="yes" class="x-iframe"></iframe>
+                <iframe src='/n/welcome' frameborder="0" scrolling="yes" class="x-iframe"></iframe>
             </div>
           </div>
           <div id="tab_show"></div>

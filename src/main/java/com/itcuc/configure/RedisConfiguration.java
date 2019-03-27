@@ -18,22 +18,6 @@ import java.time.Duration;
 @Configuration
 @EnableCaching
 public class RedisConfiguration extends CachingConfigurerSupport {
-    @Bean
-    public KeyGenerator nKeyGenerator() {
-        final char sp = ':';
-        return (target, method, params) -> {
-            StringBuilder sb = new StringBuilder();
-            sb.append(sp);
-            sb.append(target.getClass().getSimpleName());
-            sb.append(sp);
-            sb.append(method.getName());
-            for (Object obj : params) {
-                sb.append(sp);
-                sb.append(obj.toString());
-            }
-            return sb.toString();
-        };
-    }
 
     @Bean
     public CacheManager cacheManager(RedisConnectionFactory factory) {
