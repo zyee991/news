@@ -1,10 +1,10 @@
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itcuc.common.utils.HttpUtils;
-import freemarker.template.ObjectWrapper;
-import org.json.JSONObject;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -31,7 +31,6 @@ public class ZhongChuangWMSOrderCreateCommandTest {
         request.put("orderGoodsAmount","");//N,订单货款,表体部分商品总价
         request.put("orderNo","123456");//订单编号,电商平台订单号
         request.put("orderTaxAmount","");//N,订单税款,交易过程中商家向用户征收的税款，免税模式填写0
-        request.put("totalCount","");//N,总件数，默认为1，表示订单不拆分包裹，不填表示为1
         request.put("fee","");//N,运杂费,默认为0.0000
         request.put("declareType","1");//N,申报方式
         request.put("commerceCode","");//N
@@ -57,13 +56,35 @@ public class ZhongChuangWMSOrderCreateCommandTest {
         request.put("consigneeAdd","名泉路天天快递");//收件人地址
         request.put("consigneeMobile","15208453373");//收货人手机
         request.put("inputdate",sdf1.format(new Date()));//N,订单日期,yyyy-MM-dd hh:mm:ss，这个是用于客户在货主系统上查看使用
-        request.put("tradeType","");//N,不填或者填0是保税模式，1为集货直邮,2是一般贸易
         request.put("orderNoExt","");//N,OMS订单号,对接客户的OMS系统的预留字段
         request.put("comment","");//N,备注，打印在面单上的备注信息
         request.put("commentExt","");//N,特殊备注，不打印再面单上的备注信息，给备注人员看的信息
 
         request.put("logistic","");
         request.put("commerceName","");
+
+        String signStr = getSignStr(request);
+
+
+
+        //构造签名
+
+        System.out.println("字典排序:"+signStr);
+        try {
+            signStr = URLEncoder.encode(signStr,"utf-8").replace("+","%C2%A0");
+            System.out.println("urlEncode:" + signStr);
+            signStr = Base64.getEncoder().encodeToString(signStr.getBytes("utf-8")).toLowerCase();
+            System.out.println("base64小写:" + signStr);
+            signStr = signStr + key;
+            System.out.println("加key："+signStr);
+//            signStr = signStr.toLowerCase();
+//            signStr = (Base64Util.encodeToString(signStr.getBytes("utf-8"))).toLowerCase()+key;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+
 
         //商品明细
         ArrayList goods = new ArrayList();
@@ -74,20 +95,10 @@ public class ZhongChuangWMSOrderCreateCommandTest {
         good.put("expirationDate","2019/03/17");//N,最早发货效期,YYYY/MM/DD 如2018/11/10表示发效期在2018年11月10日之后效期最近的商品，请务必保证该效期商品库存充足，否则可能消息推送失败
         goods.add(good);
         request.put("orderSkuList",goods);
-
-        //构造签名
-        String signStr = getSignStr(request);
-        try {
-            signStr = URLEncoder.encode(signStr,"utf-8");
-            System.out.println(signStr);
-            System.out.println(Base64.getEncoder().encodeToString(signStr.getBytes("utf-8")).toLowerCase());
-            signStr = Base64.getEncoder().encodeToString(signStr.getBytes("utf-8")).toLowerCase() + key;
-//            signStr = signStr.toLowerCase();
-//            signStr = (Base64Util.encodeToString(signStr.getBytes("utf-8"))).toLowerCase()+key;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         request.put("sign",signStr);
+
+        request.put("tradeType","");//N,不填或者填0是保税模式，1为集货直邮,2是一般贸易
+        request.put("totalCount","");//N,总件数，默认为1，表示订单不拆分包裹，不填表示为1
 
 //        System.out.println(JSON.toJSONString(request) + "========================");
 
@@ -190,6 +201,26 @@ public class ZhongChuangWMSOrderCreateCommandTest {
                 outBuffer.append(aChar);
         }
         return outBuffer.toString();
+    }
+    
+    @Test
+    public void test1() {
+        String str = "{\"comment\":\"\",\"commentExt\":\"\",\"commerceCode\":\"\",\"commerceName\":\"\",\"consignee\":\"小林\",\"consigneeAdd\":\"名泉路天天快递\",\"consigneeCity\":\"绵阳市\",\"consigneeDistrict\":\"三台县\",\"consigneeMobile\":\"15208453373\",\"consigneePro\":\"四川省\",\"declareType\":\"1\",\"eCommerceCode\":\"\",\"eCommerceName\":\"\",\"fee\":\"\",\"inputdate\":\"2019-03-27 14:34:24\",\"logistic\":\"\",\"logisticNo\":\"\",\"msgid\":\"20190327143424710435\",\"orderGoodsAmount\":\"\",\"orderNo\":\"123456\",\"orderNoExt\":\"\",\"orderSkuList\":[{\"amount\":\"13\",\"expirationDate\":\"2019/03/17\",\"partno\":\"10000006\",\"qty\":\"12\"}],\"orderTaxAmount\":\"\",\"orderTotalAmount\":\"\",\"payCompanyCode\":\"ZF14021901\",\"payNumber\":\"\",\"payType\":\"\",\"payUserName\":\"小林\",\"purchaserCardNo\":\"510722199504195049\",\"purchaserId\":\"\",\"purchaserName\":\"\",\"shipper\":\"小林\",\"shipperAdd\":\"明泉路天天快递\",\"shipperCity\":\"绵阳市\",\"shipperDistrict\":\"三台县\",\"shipperMobile\":\"15208453373\",\"shipperPro\":\"四川省\"}";
+        ObjectMapper mapper = new ObjectMapper();
+        TreeMap map = new TreeMap();
+        try {
+            map = mapper.readValue(str,TreeMap.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            str = getSignStr(map);
+            System.out.println(str);
+            str = URLEncoder.encode(str,"utf-8");
+            System.out.println(Base64.getEncoder().encodeToString(str.getBytes("utf-8")).toLowerCase());
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 }
 

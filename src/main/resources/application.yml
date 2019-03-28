@@ -11,6 +11,7 @@ spring:
     database: mysql
     hibernate:
       ddl-auto: none
+    open-in-view: true
   freemarker:
     cache: false
     charset: UTF-8

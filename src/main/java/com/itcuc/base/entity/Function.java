@@ -1,5 +1,6 @@
 package com.itcuc.base.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -15,8 +16,8 @@ public class Function implements Serializable {
     @Column(name = "id")
     private String id;
 
-    @OneToOne
-    private Function parent;
+    @Column(name = "parent_id")
+    private String parentId;
 
     @Column(name = "name")
     private String name;
@@ -39,6 +40,6 @@ public class Function implements Serializable {
     @Column(name = "modify_time")
     private Date modifyTime;
 
-    @ManyToMany(mappedBy = "functions")
+    @Transient
     private List<Role> roleList;
 }

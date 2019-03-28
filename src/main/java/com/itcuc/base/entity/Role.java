@@ -1,7 +1,6 @@
 package com.itcuc.base.entity;
 
 import lombok.Data;
-import org.hibernate.annotations.Proxy;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -14,7 +13,7 @@ import java.util.List;
 public class Role implements Serializable {
     @Id
     @Column(name = "id")
-    private String role;
+    private String id;
 
     @Column(name = "name")
     private String name;
@@ -31,10 +30,9 @@ public class Role implements Serializable {
     @Column(name = "modify_time")
     private Date modifyTime;
 
-    @ManyToMany
-    @JoinTable(name = "base_role_function", inverseJoinColumns = @JoinColumn(name = "function_id"), joinColumns = @JoinColumn(name = "role_id"))
+    @Transient
     private List<Function> functions;
 
-    @ManyToMany(mappedBy = "roles")
+    @Transient
     private List<Manager> managerList;
 }

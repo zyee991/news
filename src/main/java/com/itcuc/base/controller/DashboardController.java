@@ -1,23 +1,25 @@
 package com.itcuc.base.controller;
 
+import com.itcuc.base.entity.Function;
 import com.itcuc.base.entity.Manager;
+import com.itcuc.base.entity.Role;
 import com.itcuc.base.service.ManagerService;
 import com.itcuc.common.Result;
 import com.itcuc.common.ResultCode;
 import com.itcuc.common.utils.CookieUtils;
 import com.itcuc.common.utils.EncryptUtils;
 import com.itcuc.properties.Appinfo;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 
 @Controller
@@ -30,9 +32,36 @@ public class DashboardController {
     ManagerService managerService;
 
     @RequestMapping(value = "index")
-    public String index(ModelMap map) {
+    public String index(ModelMap map,HttpServletRequest request) {
         map.put("projectName",appinfo.getProjectName());
         map.put("projectVersion",appinfo.getProjectVersion());
+        Manager manager = (Manager) request.getAttribute("manager");
+
+        List<Role> roleList = manager.getRoles();
+        List<Function> functions = new ArrayList<>();
+        for(Role role :roleList) {
+            List<Function> functionList = role.getFunctions();
+            for(Function function:functionList) {
+                if(!functions.contains(function)) {
+                    functions.add(function);
+                }
+            }
+        }
+
+        List<Function> parentFunctions = new ArrayList<>();
+        List<Function> childFunctions = new ArrayList<>();
+        for(Function function:functions) {
+            if("abstract".equals(function.getId())) {
+                continue;
+            }
+            if("abstract".equals(function.getParentId())) {
+                parentFunctions.add(function);
+            } else {
+                childFunctions.add(function);
+            }
+        }
+        map.put("parentFunctions",parentFunctions);
+        map.put("childFunctions",childFunctions);
         return "index";
     }
 
@@ -67,7 +96,6 @@ public class DashboardController {
         map.put("osName",osName);
         map.put("javaVersion",javaVersion);
         map.put("projectVersion",appinfo.getProjectVersion());
-
         return "welcome";
     }
 }
