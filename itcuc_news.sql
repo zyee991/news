@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50725
 File Encoding         : 65001
 
-Date: 2019-03-27 16:39:42
+Date: 2019-03-28 17:38:07
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -27,21 +27,19 @@ CREATE TABLE `base_function` (
   `modify_time` datetime DEFAULT NULL,
   `modify_user` varchar(255) DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL,
-  `url` varchar(255) DEFAULT NULL,
   `parent_id` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FK77rvv9uf7dwy69a2e32qdftg3` (`parent_id`),
-  CONSTRAINT `FK77rvv9uf7dwy69a2e32qdftg3` FOREIGN KEY (`parent_id`) REFERENCES `base_function` (`id`)
+  `url` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of base_function
 -- ----------------------------
-INSERT INTO `base_function` VALUES ('0', null, null, null, null, null, '管理员管理', '#', 'abstract');
-INSERT INTO `base_function` VALUES ('01', null, null, null, null, null, '管理员列表', 'managerlist', '0');
-INSERT INTO `base_function` VALUES ('02', null, null, null, null, null, '角色管理', 'roleList', '0');
-INSERT INTO `base_function` VALUES ('03', null, null, null, null, null, '菜单管理', 'functionList', '0');
-INSERT INTO `base_function` VALUES ('abstract', null, null, null, null, null, '虚拟菜单', '#', 'abstract');
+INSERT INTO `base_function` VALUES ('0', null, null, null, null, null, '权限管理', 'abstract', '#');
+INSERT INTO `base_function` VALUES ('01', null, null, null, null, null, '管理员列表', '0', 'manager/list');
+INSERT INTO `base_function` VALUES ('02', null, null, null, null, null, '角色管理', '0', 'role/list');
+INSERT INTO `base_function` VALUES ('03', null, null, null, null, null, '菜单管理', '0', 'function/list');
+INSERT INTO `base_function` VALUES ('abstract', null, null, null, null, null, '虚拟菜单', null, '#');
 
 -- ----------------------------
 -- Table structure for base_manager
@@ -54,31 +52,50 @@ CREATE TABLE `base_manager` (
   `nickname` varchar(255) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
   `username` varchar(255) DEFAULT NULL,
+  `using` int(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of base_manager
 -- ----------------------------
-INSERT INTO `base_manager` VALUES ('9bd880a0-3462-4ea5-acf8-2ed5ae629bca', null, null, null, 'e10adc3949ba59abbe56e057f20f883e', 'zhangyi');
+INSERT INTO `base_manager` VALUES ('9bd880a0-3462-4ea5-acf8-2ed5ae629bca', null, null, null, 'e10adc3949ba59abbe56e057f20f883e', 'zhangyi', '1');
 
 -- ----------------------------
--- Table structure for base_manager_role
+-- Table structure for base_rel_manager_role
 -- ----------------------------
-DROP TABLE IF EXISTS `base_manager_role`;
-CREATE TABLE `base_manager_role` (
-  `manager_id` varchar(255) NOT NULL,
-  `role_id` varchar(255) NOT NULL,
-  KEY `FKkcys6yp2l3te38ityfyu4645n` (`role_id`),
-  KEY `FKnhs9kruc7orrmo9rvam3c8wb5` (`manager_id`),
-  CONSTRAINT `FKkcys6yp2l3te38ityfyu4645n` FOREIGN KEY (`role_id`) REFERENCES `base_role` (`id`),
-  CONSTRAINT `FKnhs9kruc7orrmo9rvam3c8wb5` FOREIGN KEY (`manager_id`) REFERENCES `base_manager` (`id`)
+DROP TABLE IF EXISTS `base_rel_manager_role`;
+CREATE TABLE `base_rel_manager_role` (
+  `id` varchar(255) NOT NULL,
+  `manager_id` varchar(255) DEFAULT NULL,
+  `role_id` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Records of base_manager_role
+-- Records of base_rel_manager_role
 -- ----------------------------
-INSERT INTO `base_manager_role` VALUES ('9bd880a0-3462-4ea5-acf8-2ed5ae629bca', '0');
+INSERT INTO `base_rel_manager_role` VALUES ('0', '9bd880a0-3462-4ea5-acf8-2ed5ae629bca', '0');
+
+-- ----------------------------
+-- Table structure for base_rel_role_function
+-- ----------------------------
+DROP TABLE IF EXISTS `base_rel_role_function`;
+CREATE TABLE `base_rel_role_function` (
+  `id` varchar(255) NOT NULL,
+  `role_id` varchar(255) DEFAULT NULL,
+  `function_id` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of base_rel_role_function
+-- ----------------------------
+INSERT INTO `base_rel_role_function` VALUES ('0', '0', '0');
+INSERT INTO `base_rel_role_function` VALUES ('1', '0', '01');
+INSERT INTO `base_rel_role_function` VALUES ('2', '0', '02');
+INSERT INTO `base_rel_role_function` VALUES ('3', '0', '03');
+INSERT INTO `base_rel_role_function` VALUES ('4', '0', 'abstract');
 
 -- ----------------------------
 -- Table structure for base_role
@@ -98,28 +115,6 @@ CREATE TABLE `base_role` (
 -- Records of base_role
 -- ----------------------------
 INSERT INTO `base_role` VALUES ('0', null, null, null, null, '超级管理员');
-
--- ----------------------------
--- Table structure for base_role_function
--- ----------------------------
-DROP TABLE IF EXISTS `base_role_function`;
-CREATE TABLE `base_role_function` (
-  `role_id` varchar(255) NOT NULL,
-  `function_id` varchar(255) NOT NULL,
-  KEY `FK2naj6hyey0u5ya58bjirn6vye` (`function_id`),
-  KEY `FKbjkx3b62sqbvryl0snfsyao3g` (`role_id`),
-  CONSTRAINT `FK2naj6hyey0u5ya58bjirn6vye` FOREIGN KEY (`function_id`) REFERENCES `base_function` (`id`),
-  CONSTRAINT `FKbjkx3b62sqbvryl0snfsyao3g` FOREIGN KEY (`role_id`) REFERENCES `base_role` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of base_role_function
--- ----------------------------
-INSERT INTO `base_role_function` VALUES ('0', '0');
-INSERT INTO `base_role_function` VALUES ('0', '01');
-INSERT INTO `base_role_function` VALUES ('0', '02');
-INSERT INTO `base_role_function` VALUES ('0', '03');
-INSERT INTO `base_role_function` VALUES ('0', 'abstract');
 
 -- ----------------------------
 -- Table structure for news_article
