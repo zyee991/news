@@ -41,7 +41,7 @@
       <xblock>
         <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
         <button class="layui-btn" onclick="x_admin_show('添加用户','./admin-add.html')"><i class="layui-icon"></i>添加</button>
-        <span class="x-right" style="line-height:40px" id="total-data">共有数据：88 条</span>
+        <span class="x-right" style="line-height:40px" id="total-data">共有数据：<span id="total-count"></span> 条</span>
       </xblock>
       <table class="layui-table">
         <thead>
@@ -49,14 +49,14 @@
             <th>
               <div class="layui-unselect header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div>
             </th>
-            <th>登录名</th>
+            <th>用户名</th>
             <th>昵称</th>
             <th>角色</th>
             <th>状态</th>
             <th>操作</th>
         </thead>
-        <tbody>
-          <tr id="data-table">
+        <tbody id="data-table">
+          <tr>
             <td>
               <div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id='2'><i class="layui-icon">&#xe605;</i></div>
             </td>
@@ -154,6 +154,69 @@
             $(".layui-form-checked").not('.header').parents('tr').remove();
         });
       }
+    </script>
+    <script>
+        jQuery(function () {
+            $.get("data?pageIndex=0&pageSize=10",function (result) {
+                // content: Array [ {…} ]
+                //             ​​
+                // empty: false
+                // ​​
+                // first: true
+                // ​​
+                // last: true
+                // ​​
+                // number: 0
+                // ​​
+                // numberOfElements: 1
+                // ​​
+                // pageable: Object { offset: 0, pageSize: 10, pageNumber: 0, … }
+                // ​​
+                // size: 10
+                // ​​
+                // sort: Object { sorted: true, unsorted: false, empty: false }
+                // ​​
+                // totalElements: 1
+                // ​​
+                // totalPages: 1
+                if(result.code == 1) {
+                    var data = result.data;
+                    $("#total-count").text(data.totalElements);
+                    var table_data = "<tr>\n" +
+                            "            <td>\n" +
+                            "              <div class=\"layui-unselect layui-form-checkbox\" lay-skin=\"primary\" data-id='2'><i class=\"layui-icon\">&#xe605;</i></div>\n" +
+                            "            </td>\n" +
+                            "            <td>$username</td>\n" +
+                            "            <td>$nickname</td>\n" +
+                            "            <td>$role</td>\n" +
+                            "            <td class=\"td-status\">\n" +
+                            "              <span class=\"layui-btn layui-btn-normal layui-btn-mini\">$using</span></td>\n" +
+                            "            <td class=\"td-manage\">\n" +
+                            "              <a onclick=\"member_stop(this,'10001')\" href=\"javascript:;\"  title=\"启用\">\n" +
+                            "                <i class=\"layui-icon\">&#xe601;</i>\n" +
+                            "              </a>\n" +
+                            "              <a title=\"编辑\"  onclick=\"x_admin_show('编辑','admin-edit.html')\" href=\"javascript:;\">\n" +
+                            "                <i class=\"layui-icon\">&#xe642;</i>\n" +
+                            "              </a>\n" +
+                            "              <a title=\"删除\" onclick=\"member_del(this,'$userid')\" href=\"javascript:;\">\n" +
+                            "                <i class=\"layui-icon\">&#xe640;</i>\n" +
+                            "              </a>\n" +
+                            "            </td>\n" +
+                            "          </tr>"
+                    var list = data.content;
+                    for(var i in list) {
+                        var username = list[i].username;
+                        var nickname = list[i].nickname;
+                        var userid = list[i].id;
+                        var using = list[i].using;
+                        var tr = table_data.replace("$username",username).replace("$nickname"，nickname).replace("$userid",id).replace("$using",using == 1 ? "已启用":"禁用");
+                        $("#data-table").appendChild($(tr));
+                    }
+                } else {
+                    layer.msg("数据请求失败，请稍后重试");
+                }
+            })
+        })
     </script>
   </body>
 
