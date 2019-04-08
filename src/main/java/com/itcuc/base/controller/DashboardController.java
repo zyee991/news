@@ -8,6 +8,7 @@ import com.itcuc.common.Result;
 import com.itcuc.common.ResultCode;
 import com.itcuc.common.utils.CookieUtils;
 import com.itcuc.common.utils.EncryptUtils;
+import com.itcuc.common.utils.IpAddressUtil;
 import com.itcuc.properties.Appinfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -31,8 +32,11 @@ public class DashboardController {
     @Autowired
     ManagerService managerService;
 
+    @Autowired
+    HttpServletRequest request;
+
     @RequestMapping(value = "index")
-    public String index(ModelMap map,HttpServletRequest request) {
+    public String index(ModelMap map) {
         map.put("projectName",appinfo.getProjectName());
         map.put("projectVersion",appinfo.getProjectVersion());
         Manager manager = (Manager) request.getAttribute("manager");
@@ -75,8 +79,12 @@ public class DashboardController {
     @RequestMapping(value = "signin")
     @ResponseBody
     public Result signin(String username, String password) {
+        String ip = IpAddressUtil.getIpAdrress(request);
         Manager manager = managerService.findByUsername(username);
         if(manager != null && EncryptUtils.verifyMd5(password,"",manager.getPassword())) {
+            manager.setLoginTime(new Date());
+            manager.setLoginAddr(ip);
+            managerService.update(manager);
             CookieUtils.addCookie("mninfo",manager.getId());
             return Result.success();
         } else {
@@ -85,7 +93,7 @@ public class DashboardController {
     }
 
     @RequestMapping(value = "welcome")
-    public String welcome(ModelMap map,HttpServletRequest request) {
+    public String welcome(ModelMap map) {
         Manager manager = (Manager) request.getAttribute("manager");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:ss");
         map.put("nickname",manager.getNickname() == null ? manager.getUsername() : manager.getNickname());

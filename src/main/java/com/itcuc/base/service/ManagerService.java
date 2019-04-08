@@ -9,4 +9,6 @@ public interface ManagerService {
     Manager findById(String id);
     Manager findByUsername(String username);
     Page<Manager> findManagerList(Map<String,String> map);
+
+    void update(Manager manager);
 }

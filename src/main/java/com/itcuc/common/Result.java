@@ -2,6 +2,8 @@ package com.itcuc.common;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class Result {
 
@@ -9,14 +11,9 @@ public class Result {
 
     private String msg;
 
+    private Integer count;
+
     private Object data;
-
-    public Result() {}
-
-    public Result(Integer code, String msg) {
-        this.code = code;
-        this.msg = msg;
-    }
 
     public Result(ResultCode resultCode) {
         this.code = resultCode.code();
@@ -31,6 +28,9 @@ public class Result {
     public static Result success(Object data) {
         Result result = new Result(ResultCode.SUCCESS);
         result.setData(data);
+        if(data instanceof List) {
+            result.setCount(((List) data).size());
+        }
         return result;
     }
 

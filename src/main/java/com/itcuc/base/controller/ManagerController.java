@@ -30,7 +30,7 @@ public class ManagerController {
     public Result data(@RequestParam Map<String,String> paramMap) {
         Page<Manager> page = managerService.findManagerList(paramMap);
         if(page != null) {
-            return Result.success(page);
+            return Result.success(page.getContent());
         } else {
             return Result.failure(ResultCode.RESULE_DATA_NONE);
         }

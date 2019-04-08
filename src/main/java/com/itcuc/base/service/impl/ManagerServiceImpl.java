@@ -15,10 +15,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -51,13 +49,14 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     public Manager findByUsername(String username) {
-        return managerDao.findByUsername(username);
+        Manager manager = managerDao.findByUsername(username);
+        return manager;
     }
 
     @Override
     public Page<Manager> findManagerList(Map<String,String> map) {
-        String pageIndex = map.get("pageIndex");
-        String pageSize = map.get("pageSize");
+        String pageIndex = map.get("page");
+        String pageSize = map.get("limit");
         String username = map.get("username");
 
         Specification<Manager> spe = (Specification<Manager>) (root, criteriaQuery, criteriaBuilder) -> {
@@ -73,6 +72,12 @@ public class ManagerServiceImpl implements ManagerService {
             }
         };
 
-        return managerDao.findAll(spe, PageRequest.of(Integer.valueOf(pageIndex),Integer.valueOf(pageSize), Sort.by(Sort.Order.asc("username"),Sort.Order.asc("id"))));
+        return managerDao.findAll(spe, PageRequest.of(Integer.valueOf(pageIndex) - 1,Integer.valueOf(pageSize), Sort.by(Sort.Order.asc("username"),Sort.Order.asc("id"))));
+    }
+
+    @Override
+    @Transactional(rollbackOn = Exception.class)
+    public void update(Manager manager) {
+        managerDao.save(manager);
     }
 }

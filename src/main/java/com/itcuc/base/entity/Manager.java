@@ -30,8 +30,8 @@ public class Manager implements Serializable {
     @Column(name = "login_addr")
     private String loginAddr;
 
-    @Column(name = "using",length = 1)
-    private Integer using;
+    @Column(name = "state",length = 1)
+    private String state;
 
     @Transient
     private List<Role> roles;
