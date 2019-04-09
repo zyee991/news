@@ -7,10 +7,12 @@ import com.itcuc.common.ResultCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 @Controller
@@ -19,6 +21,8 @@ public class ManagerController {
 
     @Autowired
     ManagerService managerService;
+    @Autowired
+    HttpServletRequest request;
 
     @RequestMapping("list")
     public String list() {
@@ -34,5 +38,14 @@ public class ManagerController {
         } else {
             return Result.failure(ResultCode.RESULE_DATA_NONE);
         }
+    }
+
+    @RequestMapping("edit")
+    public String edit(@RequestParam String id, ModelMap map) {
+        Manager manager = managerService.findById(id);
+        if(manager != null) {
+            map.put("manager",manager);
+        }
+        return "manager/edit";
     }
 }

@@ -66,6 +66,7 @@ public class DashboardController {
         }
         map.put("parentFunctions",parentFunctions);
         map.put("childFunctions",childFunctions);
+        map.put("copyright",appinfo.getCopyright());
         return "index";
     }
 
