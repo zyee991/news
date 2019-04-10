@@ -21,12 +21,14 @@ public class Role implements Serializable {
     @Column(name = "created_user")
     private String createdUser;
 
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_time")
     private Date createdTime;
 
     @Column(name = "modify_user")
     private String modifyUser;
 
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "modify_time")
     private Date modifyTime;
 

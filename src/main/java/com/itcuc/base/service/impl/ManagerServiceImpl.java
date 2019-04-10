@@ -31,11 +31,9 @@ public class ManagerServiceImpl implements ManagerService {
     RoleDao roleDao;
 
     @Override
-    @Cacheable(value = "manager",key = "#p0")
-    public Manager findById(String id) {
-        Manager manager = managerDao.findById(id).get();
+    public void loadRoles(Manager manager) {
         if(manager != null) {
-            List<Role> roleList = managerDao.findRoleByUserId(id);
+            List<Role> roleList = managerDao.findRoleByUserId(manager.getId());
             if(roleList != null && roleList.size() > 0) {
                 for(Role role : roleList) {
                     List<Function> functions = roleDao.findFunctionsByRoleId(role.getId());
@@ -44,6 +42,13 @@ public class ManagerServiceImpl implements ManagerService {
             }
             manager.setRoles(roleList);
         }
+    }
+
+    @Override
+    @Cacheable(value = "manager",key = "#p0")
+    public Manager findById(String id) {
+        Manager manager = managerDao.findById(id).get();
+        loadRoles(manager);
         return manager;
     }
 

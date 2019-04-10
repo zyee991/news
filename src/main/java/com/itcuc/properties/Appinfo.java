@@ -13,4 +13,6 @@ public class Appinfo {
     private String projectName;
     @Value("${projectVersion}")
     private String projectVersion;
+    @Value("${copyright}")
+    private String copyright;
 }

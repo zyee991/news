@@ -24,6 +24,7 @@ public class Manager implements Serializable {
     @Column(name = "nickname")
     private String nickname;
 
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "login_time")
     private Date loginTime;
 

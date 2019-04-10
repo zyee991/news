@@ -450,5 +450,9 @@ function x_admin_add_to_tab(title,url,is_refresh) {
     tab.tabChange(id);
 }
 
-
-
+/****************************/
+/***********通用方法**********/
+/****************************/
+Date.prototype.toLocaleString = function() {
+    return this.getFullYear() + "-" + (this.getMonth() + 1) + "-" + this.getDate() + " " + this.getHours() + ":" + this.getMinutes() + ":" + this.getSeconds();
+};

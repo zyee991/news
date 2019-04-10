@@ -11,4 +11,5 @@ public interface ManagerService {
     Page<Manager> findManagerList(Map<String,String> map);
 
     void update(Manager manager);
+    void loadRoles(Manager manager);
 }

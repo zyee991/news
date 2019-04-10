@@ -39,7 +39,7 @@
               form.on('submit(login)', function(data){
                   var param = {username:data.field.username,password:data.field.password};
                   $.post('signin',param,function (result) {
-                      if(result.code == '1') {
+                      if(result.code == '0') {
                           location.href = '/n/index';
                       } else {
                           layer.msg(result.msg);

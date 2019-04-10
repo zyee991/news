@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -34,7 +35,11 @@ public class ManagerController {
     public Result data(@RequestParam Map<String,String> paramMap) {
         Page<Manager> page = managerService.findManagerList(paramMap);
         if(page != null) {
-            return Result.success(page.getContent());
+            List<Manager> managers = page.getContent();
+            for(Manager manager:managers) {
+                managerService.loadRoles(manager);
+            }
+            return Result.success(managers);
         } else {
             return Result.failure(ResultCode.RESULE_DATA_NONE);
         }

@@ -15,14 +15,13 @@ public class Result {
 
     private Object data;
 
-    public Result(ResultCode resultCode) {
+    private Result(ResultCode resultCode) {
         this.code = resultCode.code();
         this.msg = resultCode.message();
     }
 
     public static Result success() {
-        Result result = new Result(ResultCode.SUCCESS);
-        return result;
+        return new Result(ResultCode.SUCCESS);
     }
 
     public static Result success(Object data) {
@@ -35,8 +34,7 @@ public class Result {
     }
 
     public static Result failure(ResultCode resultCode) {
-        Result result = new Result(resultCode);
-        return result;
+        return new Result(resultCode);
     }
 
     public static Result failure(ResultCode resultCode, Object data) {
