@@ -1,6 +1,7 @@
 package com.itcuc.base.controller;
 
 import com.itcuc.base.entity.Manager;
+import com.itcuc.base.entity.Role;
 import com.itcuc.base.service.ManagerService;
 import com.itcuc.common.Result;
 import com.itcuc.common.ResultCode;
@@ -43,6 +44,11 @@ public class ManagerController {
         } else {
             return Result.failure(ResultCode.RESULE_DATA_NONE);
         }
+    }
+
+    @RequestMapping("add")
+    public String add(ModelMap map) {
+        return "manager/add";
     }
 
     @RequestMapping("edit")

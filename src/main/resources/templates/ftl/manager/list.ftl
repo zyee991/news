@@ -126,11 +126,19 @@
                                 return "<span class=\"layui-btn layui-btn-normal layui-btn-mini layui-btn-disabled\">已停用</span>";
                             }
                         }},
-                    {title: '操作', toolbar: '#barDemo'}
+                    {title: '角色', templet:function (d) {
+                            var roles = d.roles;
+                            var ele = "";
+                            for(var i in roles) {
+                                ele += "<span class=\"layui-btn layui-btn-mini\">" + roles[i].name + "</span>";
+                            }
+                            return ele;
+                        }},
+                    {title: '操作', toolbar: '#operateBar'}
                 ]],
                 url: "data",
                 page: true,
-                toolbar: true,
+                toolbar: "#titleBar",
             });
 
             table.on('tool(mlist)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
@@ -138,7 +146,7 @@
                 var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
                 var tr = obj.tr; //获得当前行 tr 的DOM对象
 
-                if(layEvent === 'detail'){ //查看
+                if(layEvent === 'add'){ //查看
                     //do somehing
                 } else if(layEvent === 'del'){ //删除
                     layer.confirm('真的删除行么', function(index){
@@ -158,9 +166,16 @@
             });
         })
     </script>
-    <script type="text/html" id="barDemo">
+    <script type="text/html" id="operateBar">
         <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
         <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    </script>
+    <script type="text/html" id="titleBar">
+        <div class="layui-btn-container">
+            <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="add">新增</a>
+            <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+        </div>
     </script>
   </body>
 
