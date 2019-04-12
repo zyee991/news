@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50725
 File Encoding         : 65001
 
-Date: 2019-03-28 17:38:07
+Date: 2019-04-12 16:59:15
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -51,15 +51,16 @@ CREATE TABLE `base_manager` (
   `login_time` datetime DEFAULT NULL,
   `nickname` varchar(255) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
-  `username` varchar(255) DEFAULT NULL,
-  `using` int(1) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  `username` varchar(255) NOT NULL,
+  `state` varchar(1) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username` (`username`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of base_manager
 -- ----------------------------
-INSERT INTO `base_manager` VALUES ('9bd880a0-3462-4ea5-acf8-2ed5ae629bca', null, null, null, 'e10adc3949ba59abbe56e057f20f883e', 'zhangyi', '1');
+INSERT INTO `base_manager` VALUES ('9bd880a0-3462-4ea5-acf8-2ed5ae629bca', '0:0:0:0:0:0:0:1', '2019-04-12 16:44:49', 'zy', 'e10adc3949ba59abbe56e057f20f883e', 'zhangyi', '1');
 
 -- ----------------------------
 -- Table structure for base_rel_manager_role
@@ -115,6 +116,76 @@ CREATE TABLE `base_role` (
 -- Records of base_role
 -- ----------------------------
 INSERT INTO `base_role` VALUES ('0', null, null, null, null, '超级管理员');
+INSERT INTO `base_role` VALUES ('1', '2019-04-12 15:30:05', '', '2019-04-12 15:30:08', '', '一般会员');
+
+-- ----------------------------
+-- Table structure for m_goods
+-- ----------------------------
+DROP TABLE IF EXISTS `m_goods`;
+CREATE TABLE `m_goods` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `price` decimal(10,0) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of m_goods
+-- ----------------------------
+INSERT INTO `m_goods` VALUES ('1', '苹果香蕉柠檬套餐', '50');
+INSERT INTO `m_goods` VALUES ('2', '香蕉单品', '20');
+
+-- ----------------------------
+-- Table structure for m_rel
+-- ----------------------------
+DROP TABLE IF EXISTS `m_rel`;
+CREATE TABLE `m_rel` (
+  `id` int(11) NOT NULL,
+  `g_id` int(11) DEFAULT NULL,
+  `s_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of m_rel
+-- ----------------------------
+INSERT INTO `m_rel` VALUES ('1', '1', '1');
+INSERT INTO `m_rel` VALUES ('2', '1', '2');
+INSERT INTO `m_rel` VALUES ('3', '1', '3');
+INSERT INTO `m_rel` VALUES ('4', '2', '2');
+
+-- ----------------------------
+-- Table structure for m_sell
+-- ----------------------------
+DROP TABLE IF EXISTS `m_sell`;
+CREATE TABLE `m_sell` (
+  `id` int(11) NOT NULL,
+  `g_id` int(11) DEFAULT NULL,
+  `count` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of m_sell
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for m_store
+-- ----------------------------
+DROP TABLE IF EXISTS `m_store`;
+CREATE TABLE `m_store` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `count` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of m_store
+-- ----------------------------
+INSERT INTO `m_store` VALUES ('1', '苹果', '10');
+INSERT INTO `m_store` VALUES ('2', '香蕉', '10');
+INSERT INTO `m_store` VALUES ('3', '柠檬', '10');
 
 -- ----------------------------
 -- Table structure for news_article

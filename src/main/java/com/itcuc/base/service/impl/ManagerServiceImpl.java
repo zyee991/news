@@ -6,6 +6,7 @@ import com.itcuc.base.entity.Role;
 import com.itcuc.base.repository.ManagerDao;
 import com.itcuc.base.repository.RoleDao;
 import com.itcuc.base.service.ManagerService;
+import com.itcuc.common.utils.EncryptUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -20,6 +21,7 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class ManagerServiceImpl implements ManagerService {
@@ -41,6 +43,30 @@ public class ManagerServiceImpl implements ManagerService {
                 }
             }
             manager.setRoles(roleList);
+        }
+    }
+
+    @Override
+    public Manager save(Map<String, String> paramMap) {
+        String username = paramMap.get("username");
+        String nickname = paramMap.get("nickname");
+        String roles = paramMap.get("roles");
+        if(paramMap.containsKey("id")) {
+            return null;
+        } else {
+            Manager manager = managerDao.findByUsername("username");
+            if(manager != null) {
+                return null;
+            } else {
+                String password = paramMap.get("password");
+                manager = new Manager();
+                manager.setId(UUID.randomUUID().toString());
+                manager.setNickname(nickname);
+                manager.setPassword(EncryptUtils.md5(password,""));
+                manager.setState("1");
+//                managerDao.save(manager);
+                return manager;
+            }
         }
     }
 

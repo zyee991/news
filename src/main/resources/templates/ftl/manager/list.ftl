@@ -110,7 +110,7 @@
             var table = layui.table;
             table.render({
                 elem: "#data",
-                cols: [[{checkbox: true},
+                cols: [[
                     {field: 'id', hide: true},
                     {field: 'username', title: '用户名'},
                     {field: 'nickname', title: '昵称', edit:'text'},
@@ -146,9 +146,7 @@
                 var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
                 var tr = obj.tr; //获得当前行 tr 的DOM对象
 
-                if(layEvent === 'add'){ //查看
-                    //do somehing
-                } else if(layEvent === 'del'){ //删除
+                if(layEvent === 'del'){ //删除
                     layer.confirm('真的删除行么', function(index){
                         obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
                         layer.close(index);
@@ -164,6 +162,13 @@
                     });
                 }
             });
+
+            table.on('toolbar(mlist)',function (obj) {
+                var layEvent = obj.event;
+                if(layEvent === 'add'){ //查看
+                    x_admin_show('新增','add',600,400);
+                }
+            });
         })
     </script>
     <script type="text/html" id="operateBar">
@@ -173,8 +178,6 @@
     <script type="text/html" id="titleBar">
         <div class="layui-btn-container">
             <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="add">新增</a>
-            <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
         </div>
     </script>
   </body>

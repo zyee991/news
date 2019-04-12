@@ -12,4 +12,6 @@ public interface ManagerService {
 
     void update(Manager manager);
     void loadRoles(Manager manager);
+
+    Manager save(Map<String, String> paramMap);
 }

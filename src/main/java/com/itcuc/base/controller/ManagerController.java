@@ -3,6 +3,7 @@ package com.itcuc.base.controller;
 import com.itcuc.base.entity.Manager;
 import com.itcuc.base.entity.Role;
 import com.itcuc.base.service.ManagerService;
+import com.itcuc.base.service.RoleService;
 import com.itcuc.common.Result;
 import com.itcuc.common.ResultCode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,8 @@ public class ManagerController {
 
     @Autowired
     ManagerService managerService;
+    @Autowired
+    RoleService roleService;
     @Autowired
     HttpServletRequest request;
 
@@ -48,6 +51,8 @@ public class ManagerController {
 
     @RequestMapping("add")
     public String add(ModelMap map) {
+        List<Role> roles = roleService.queryAll();
+        map.put("roles",roles);
         return "manager/add";
     }
 
@@ -58,5 +63,16 @@ public class ManagerController {
             map.put("manager",manager);
         }
         return "manager/edit";
+    }
+
+    @RequestMapping("save")
+    @ResponseBody
+    public Result save(@RequestParam Map<String,String> paramMap) {
+        Manager manager = managerService.save(paramMap);
+        if(manager != null) {
+            return Result.success();
+        } else {
+            return Result.failure(ResultCode.USER_HAS_EXISTED);
+        }
     }
 }

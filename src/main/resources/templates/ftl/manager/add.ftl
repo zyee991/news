@@ -50,7 +50,7 @@
                 <span class="x-red">*</span>密码
             </label>
             <div class="layui-input-inline">
-                <input type="password" id="L_pass" name="pass" required="" lay-verify="pass"
+                <input type="password" id="L_pass" name="password" required="" lay-verify="pass"
                        autocomplete="off" class="layui-input">
             </div>
             <div class="layui-form-mid layui-word-aux">
@@ -69,9 +69,9 @@
         <div class="layui-form-item">
             <label class="layui-form-label"><span class="x-red">*</span>角色</label>
             <div class="layui-input-block">
-                <input type="checkbox" name="like1[write]" lay-skin="primary" title="超级管理员" checked="">
-                <input type="checkbox" name="like1[read]" lay-skin="primary" title="编辑人员">
-                <input type="checkbox" name="like1[write]" lay-skin="primary" title="宣传人员" checked="">
+                <#list roles as role>
+                    <input lay-filter="checkbox" type="checkbox" name="roles" title="${role.name}" value="${role.id}">
+                </#list>
             </div>
         </div>
         <div class="layui-form-item">
@@ -91,9 +91,9 @@
 
         //自定义验证规则
         form.verify({
-            nikename: function(value){
-                if(value.length < 5){
-                    return '昵称至少得5个字符啊';
+            username: function(value){
+                if(value.length < 4){
+                    return '用户名至少4个字符';
                 }
             }
             ,pass: [/(.+){6,12}$/, '密码必须6到12位']
@@ -103,19 +103,35 @@
                 }
             }
         });
+        var roleList = new Array();
+        form.on('checkbox(checkbox)', function(data){
+            var checked = data.elem.checked;
+            if(checked) {
+                roleList.push(data.value); //复选框value值，也可以通过data.elem.value得到
+            } else {
+                roleList.remove(data.value);
+            }
+        });
 
         //监听提交
         form.on('submit(add)', function(data){
-            console.log(data);
-            //发异步，把数据提交给php
-            layer.alert("增加成功", {icon: 6},function () {
-                // 获得frame索引
-                var index = parent.layer.getFrameIndex(window.name);
-                //关闭当前frame
-                parent.layer.close(index);
-                // 可以对父窗口进行刷新
-                x_admin_father_reload();
-            });
+            var param = data.field;
+            param.roles = roleList.join(",");
+            console.log(param);
+            $.post('save',param,function (result) {
+                if(result.code == 1) {
+                    layer.alert("增加成功", {icon: 6},function () {
+                        // 获得frame索引
+                        var index = parent.layer.getFrameIndex(window.name);
+                        //关闭当前frame
+                        parent.layer.close(index);
+                        // 可以对父窗口进行刷新
+                        x_admin_father_reload();
+                    });
+                } else {
+                    layer.alert("增加失败:" + result.msg);
+                }
+            })
             return false;
         });
 
