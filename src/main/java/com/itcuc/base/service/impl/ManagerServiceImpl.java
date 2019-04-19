@@ -1,14 +1,20 @@
 package com.itcuc.base.service.impl;
 
+import com.google.common.collect.Lists;
 import com.itcuc.base.entity.Function;
 import com.itcuc.base.entity.Manager;
+import com.itcuc.base.entity.ManagerRole;
 import com.itcuc.base.entity.Role;
 import com.itcuc.base.repository.ManagerDao;
+import com.itcuc.base.repository.ManagerRoleDao;
 import com.itcuc.base.repository.RoleDao;
 import com.itcuc.base.service.ManagerService;
 import com.itcuc.common.utils.EncryptUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,22 +24,23 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.Predicate;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
+@CacheConfig(cacheNames = "manager")
 public class ManagerServiceImpl implements ManagerService {
 
     @Autowired
     ManagerDao managerDao;
 
     @Autowired
+    ManagerRoleDao managerRoleDao;
+
+    @Autowired
     RoleDao roleDao;
 
     @Override
-    public void loadRoles(Manager manager) {
+    public void loadRoles(String id,Manager manager) {
         if(manager != null) {
             List<Role> roleList = managerDao.findRoleByUserId(manager.getId());
             if(roleList != null && roleList.size() > 0) {
@@ -47,41 +54,70 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
+    @Transactional(rollbackOn = Exception.class)
+    @CacheEvict(allEntries = true)
     public Manager save(Map<String, String> paramMap) {
-        String username = paramMap.get("username");
-        String nickname = paramMap.get("nickname");
-        String roles = paramMap.get("roles");
-        if(paramMap.containsKey("id")) {
-            return null;
-        } else {
-            Manager manager = managerDao.findByUsername("username");
-            if(manager != null) {
-                return null;
-            } else {
-                String password = paramMap.get("password");
-                manager = new Manager();
-                manager.setId(UUID.randomUUID().toString());
-                manager.setNickname(nickname);
-                manager.setPassword(EncryptUtils.md5(password,""));
-                manager.setState("1");
-//                managerDao.save(manager);
-                return manager;
+        String username = paramMap.get("new_username");
+        String nickname = paramMap.get("new_nickname");
+        String rolesStr = paramMap.get("roles");
+        String saveType = paramMap.get("saveType");
+        Manager manager = null;
+        if("add".equals(saveType)) {
+            String password = paramMap.get("new_password");
+            manager = new Manager();
+            manager.setId(UUID.randomUUID().toString());
+            manager.setUsername(username);
+            manager.setNickname(nickname);
+            manager.setPassword(EncryptUtils.md5(password,""));
+            manager.setState("1");
+            if(StringUtils.isNotBlank(rolesStr)) {
+                saveManagerRole(rolesStr, manager);
             }
+            managerDao.save(manager);
+        } else if("edit".equals(saveType)) {
+            String id = paramMap.get("id");
+            manager = managerDao.findById(id).get();
+            if(StringUtils.isNotBlank(username)) {
+                manager.setUsername(username);
+            }
+            if(StringUtils.isNotBlank(nickname)) {
+                manager.setNickname(nickname);
+            }
+            if(StringUtils.isNotBlank(rolesStr)) {
+                managerRoleDao.deleteByManagerId(manager.getId());
+                saveManagerRole(rolesStr, manager);
+            }
+            manager = managerDao.save(manager);
         }
+        return manager;
+    }
+
+    private void saveManagerRole(String rolesStr, Manager manager) {
+        String[] roles = rolesStr.split(",");
+        List<Role> roleList = new ArrayList<>();
+        for (String roleId : roles) {
+            ManagerRole managerRole = new ManagerRole();
+            managerRole.setId(UUID.randomUUID().toString());
+            managerRole.setRoleId(roleId);
+            managerRole.setManagerId(manager.getId());
+            managerRoleDao.save(managerRole);
+            Role role = roleDao.getOne(roleId);
+            roleList.add(role);
+        }
+        manager.setRoles(roleList);
     }
 
     @Override
-    @Cacheable(value = "manager",key = "#p0")
+    @Cacheable(key = "#p0")
     public Manager findById(String id) {
         Manager manager = managerDao.findById(id).get();
-        loadRoles(manager);
+        loadRoles(manager.getId(),manager);
         return manager;
     }
 
     @Override
     public Manager findByUsername(String username) {
-        Manager manager = managerDao.findByUsername(username);
-        return manager;
+        return managerDao.findByUsername(username);
     }
 
     @Override
@@ -107,8 +143,8 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    @Transactional(rollbackOn = Exception.class)
-    public void update(Manager manager) {
+    @CachePut(key = "#p0",value = "manager")
+    public void update(String id,Manager manager) {
         managerDao.save(manager);
     }
 }

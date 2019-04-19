@@ -41,7 +41,7 @@ public class ManagerController {
         if(page != null) {
             List<Manager> managers = page.getContent();
             for(Manager manager:managers) {
-                managerService.loadRoles(manager);
+                managerService.loadRoles(manager.getId(),manager);
             }
             return Result.success(managers);
         } else {
@@ -59,8 +59,17 @@ public class ManagerController {
     @RequestMapping("edit")
     public String edit(@RequestParam String id, ModelMap map) {
         Manager manager = managerService.findById(id);
+        List<Role> roles = roleService.queryAll();
         if(manager != null) {
             map.put("manager",manager);
+            for(Role role:roles) {
+                if(manager.getRoles().contains(role)) {
+                    role.setChecked(true);
+                } else {
+                    role.setChecked(false);
+                }
+            }
+            map.put("roles",roles);
         }
         return "manager/edit";
     }

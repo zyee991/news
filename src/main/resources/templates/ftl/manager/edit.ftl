@@ -23,35 +23,43 @@
   <body>
     <div class="x-body">
         <form class="layui-form">
-          <div class="layui-form-item">
-              <label for="L_email" class="layui-form-label">
-                  <span class="x-red">*</span>用户名
-              </label>
-              <div class="layui-input-inline">
-                  <input type="text" id="L_username" name="username" required="" lay-verify="username" value="${manager.username!}"
-                  autocomplete="off" class="layui-input">
-              </div>
-              <div class="layui-form-mid layui-word-aux">
-                  <span class="x-red">*</span>将会成为您唯一的登入名
-              </div>
-          </div>
-          <div class="layui-form-item">
-              <label for="L_nickname" class="layui-form-label">
-                  <span class="x-red">*</span>昵称
-              </label>
-              <div class="layui-input-inline">
-                  <input type="text" id="L_nickname" name="nickname" required="" lay-verify="nikename" value="${manager.nickname!}"
-                  autocomplete="off" class="layui-input">
-              </div>
-          </div>
-
-          <div class="layui-form-item">
-              <label for="L_repass" class="layui-form-label">
-              </label>
-              <button  class="layui-btn" lay-filter="add" lay-submit="">
-                  保存
-              </button>
-          </div>
+            <input type="hidden" name="saveType" value="edit"/>
+            <div class="layui-form-item">
+                <label for="L_username" class="layui-form-label">
+                    <span class="x-red">*</span>用户名
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="L_username" name="new_username" required="" lay-verify="username" value="${mamager.username}"
+                           autocomplete="off" class="layui-input"/>
+                </div>
+                <div class="layui-form-mid layui-word-aux">
+                    <span class="x-red">*</span>将会成为您唯一的登入名
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_nickname" class="layui-form-label">
+                    <span class="x-red">*</span>昵称
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="L_nickname" name="new_nickname" required="" lay-verify="nickname" value="${manager.nickname}"
+                           autocomplete="off" class="layui-input"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"><span class="x-red">*</span>角色</label>
+                <div class="layui-input-block">
+                <#list roles as role>
+                    <input lay-filter="checkbox" type="checkbox" name="roles" title="${role.name}" value="${role.id}">
+                </#list>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_repass" class="layui-form-label">
+                </label>
+                <button class="layui-btn" lay-filter="add" lay-submit="">
+                    保存
+                </button>
+            </div>
       </form>
     </div>
     <script>

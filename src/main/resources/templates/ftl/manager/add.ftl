@@ -24,13 +24,14 @@
 <body>
 <div class="x-body">
     <form class="layui-form">
+        <input type="hidden" name="saveType" value="add"/>
         <div class="layui-form-item">
-            <label for="L_email" class="layui-form-label">
+            <label for="L_username" class="layui-form-label">
                 <span class="x-red">*</span>用户名
             </label>
             <div class="layui-input-inline">
-                <input type="text" id="L_username" name="username" required="" lay-verify="username"
-                       autocomplete="off" class="layui-input">
+                <input type="text" id="L_username" name="new_username" required="" lay-verify="username" value=""
+                       autocomplete="off" class="layui-input"/>
             </div>
             <div class="layui-form-mid layui-word-aux">
                 <span class="x-red">*</span>将会成为您唯一的登入名
@@ -41,8 +42,8 @@
                 <span class="x-red">*</span>昵称
             </label>
             <div class="layui-input-inline">
-                <input type="text" id="L_nickname" name="nickname" required="" lay-verify="nikename"
-                       autocomplete="off" class="layui-input">
+                <input type="text" id="L_nickname" name="new_nickname" required="" lay-verify="nickname" value=""
+                       autocomplete="off" class="layui-input"/>
             </div>
         </div>
         <div class="layui-form-item">
@@ -50,7 +51,7 @@
                 <span class="x-red">*</span>密码
             </label>
             <div class="layui-input-inline">
-                <input type="password" id="L_pass" name="password" required="" lay-verify="pass"
+                <input type="password" id="L_pass" name="new_password" required="" lay-verify="pass" value=""
                        autocomplete="off" class="layui-input">
             </div>
             <div class="layui-form-mid layui-word-aux">
@@ -62,7 +63,7 @@
                 <span class="x-red">*</span>确认密码
             </label>
             <div class="layui-input-inline">
-                <input type="password" id="L_repass" name="repass" required="" lay-verify="repass"
+                <input type="password" id="L_repass" name="new_repass" required="" lay-verify="repass" value=""
                        autocomplete="off" class="layui-input">
             </div>
         </div>
@@ -117,9 +118,8 @@
         form.on('submit(add)', function(data){
             var param = data.field;
             param.roles = roleList.join(",");
-            console.log(param);
             $.post('save',param,function (result) {
-                if(result.code == 1) {
+                if(result.code == 0) {
                     layer.alert("增加成功", {icon: 6},function () {
                         // 获得frame索引
                         var index = parent.layer.getFrameIndex(window.name);

@@ -85,7 +85,7 @@ public class DashboardController {
         if(manager != null && EncryptUtils.verifyMd5(password,"",manager.getPassword())) {
             manager.setLoginTime(new Date());
             manager.setLoginAddr(ip);
-            managerService.update(manager);
+            managerService.update(manager.getId(),manager);
             CookieUtils.addCookie("mninfo",manager.getId());
             return Result.success();
         } else {

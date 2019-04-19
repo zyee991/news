@@ -37,4 +37,7 @@ public class Role implements Serializable {
 
     @Transient
     private List<Manager> managerList;
+
+    @Transient
+    private boolean checked;
 }

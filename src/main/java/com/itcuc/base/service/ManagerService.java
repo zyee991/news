@@ -10,8 +10,8 @@ public interface ManagerService {
     Manager findByUsername(String username);
     Page<Manager> findManagerList(Map<String,String> map);
 
-    void update(Manager manager);
-    void loadRoles(Manager manager);
+    void update(String id,Manager manager);
+    void loadRoles(String id,Manager manager);
 
     Manager save(Map<String, String> paramMap);
 }

@@ -22,12 +22,6 @@
   
   <body>
     <div class="x-nav">
-      <#--<span class="layui-breadcrumb">-->
-        <#--<a href="">首页</a>-->
-        <#--<a href="">演示</a>-->
-        <#--<a>-->
-          <#--<cite>导航元素</cite></a>-->
-      <#--</span>-->
       <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
         <i class="layui-icon" style="line-height:30px">ဂ</i></a>
     </div>
@@ -112,29 +106,29 @@
                 elem: "#data",
                 cols: [[
                     {field: 'id', hide: true},
-                    {field: 'username', title: '用户名'},
-                    {field: 'nickname', title: '昵称', edit:'text'},
-                    {title: '登录时间',templet:function (d) {
+                    {width:'10%',field: 'username', title: '用户名'},
+                    {width:'10%',field: 'nickname', title: '昵称', edit:'text'},
+                    {width:'10%',title: '登录时间',templet:function (d) {
                             var timestrap = new Date(d.loginTime);
                             return timestrap.toLocaleString();
                         }},
-                    {field: 'loginAddr', title: '登录地址'},
-                    {title: '状态',templet:function (d) {
+                    {width:'10%',field: 'loginAddr', title: '登录地址'},
+                    {width:'10%',title: '状态',templet:function (d) {
                             if(d.state == 1) {
                                 return "<span class=\"layui-btn layui-btn-normal layui-btn-mini\">已启用</span>";
                             } else {
                                 return "<span class=\"layui-btn layui-btn-normal layui-btn-mini layui-btn-disabled\">已停用</span>";
                             }
                         }},
-                    {title: '角色', templet:function (d) {
+                    {width:'40%',title: '角色', templet:function (d) {
                             var roles = d.roles;
-                            var ele = "";
-                            for(var i in roles) {
-                                ele += "<span class=\"layui-btn layui-btn-mini\">" + roles[i].name + "</span>";
+                            var ele = new Array();
+                            for(var i = 0;i < roles.length;i++) {
+                                ele.push("<span class=\"layui-btn layui-btn-mini\">" + roles[i].name + "</span>");
                             }
-                            return ele;
+                            return ele.join("");
                         }},
-                    {title: '操作', toolbar: '#operateBar'}
+                    {width:'10%',title: '操作', toolbar: '#operateBar'}
                 ]],
                 url: "data",
                 page: true,
