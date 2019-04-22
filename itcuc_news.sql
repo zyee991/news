@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50725
 File Encoding         : 65001
 
-Date: 2019-04-12 16:59:15
+Date: 2019-04-22 14:58:40
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -60,7 +60,9 @@ CREATE TABLE `base_manager` (
 -- ----------------------------
 -- Records of base_manager
 -- ----------------------------
-INSERT INTO `base_manager` VALUES ('9bd880a0-3462-4ea5-acf8-2ed5ae629bca', '0:0:0:0:0:0:0:1', '2019-04-12 16:44:49', 'zy', 'e10adc3949ba59abbe56e057f20f883e', 'zhangyi', '1');
+INSERT INTO `base_manager` VALUES ('15617f36-89ef-4128-bb0b-5d6cba09864a', null, null, '1111', 'e10adc3949ba59abbe56e057f20f883e', 'zhangyi3', '1');
+INSERT INTO `base_manager` VALUES ('51bbd0fb-223e-4bfb-bab1-266547c98df8', null, null, '11111', 'e10adc3949ba59abbe56e057f20f883e', 'zhangyi1', '1');
+INSERT INTO `base_manager` VALUES ('9bd880a0-3462-4ea5-acf8-2ed5ae629bca', '0:0:0:0:0:0:0:1', '2019-04-19 13:58:37', 'zy', 'e10adc3949ba59abbe56e057f20f883e', 'zhangyi', '1');
 
 -- ----------------------------
 -- Table structure for base_rel_manager_role
@@ -77,6 +79,9 @@ CREATE TABLE `base_rel_manager_role` (
 -- Records of base_rel_manager_role
 -- ----------------------------
 INSERT INTO `base_rel_manager_role` VALUES ('0', '9bd880a0-3462-4ea5-acf8-2ed5ae629bca', '0');
+INSERT INTO `base_rel_manager_role` VALUES ('5205bc10-9bbb-4739-8af5-758518daa431', '51bbd0fb-223e-4bfb-bab1-266547c98df8', '0');
+INSERT INTO `base_rel_manager_role` VALUES ('7c28b091-8d3c-4e60-86ec-aede38962257', '15617f36-89ef-4128-bb0b-5d6cba09864a', '1');
+INSERT INTO `base_rel_manager_role` VALUES ('a899aa64-b9cd-4ce5-a304-1ca34af4aa0e', '15617f36-89ef-4128-bb0b-5d6cba09864a', '0');
 
 -- ----------------------------
 -- Table structure for base_rel_role_function
@@ -117,75 +122,6 @@ CREATE TABLE `base_role` (
 -- ----------------------------
 INSERT INTO `base_role` VALUES ('0', null, null, null, null, '超级管理员');
 INSERT INTO `base_role` VALUES ('1', '2019-04-12 15:30:05', '', '2019-04-12 15:30:08', '', '一般会员');
-
--- ----------------------------
--- Table structure for m_goods
--- ----------------------------
-DROP TABLE IF EXISTS `m_goods`;
-CREATE TABLE `m_goods` (
-  `id` int(11) NOT NULL,
-  `name` varchar(255) DEFAULT NULL,
-  `price` decimal(10,0) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of m_goods
--- ----------------------------
-INSERT INTO `m_goods` VALUES ('1', '苹果香蕉柠檬套餐', '50');
-INSERT INTO `m_goods` VALUES ('2', '香蕉单品', '20');
-
--- ----------------------------
--- Table structure for m_rel
--- ----------------------------
-DROP TABLE IF EXISTS `m_rel`;
-CREATE TABLE `m_rel` (
-  `id` int(11) NOT NULL,
-  `g_id` int(11) DEFAULT NULL,
-  `s_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of m_rel
--- ----------------------------
-INSERT INTO `m_rel` VALUES ('1', '1', '1');
-INSERT INTO `m_rel` VALUES ('2', '1', '2');
-INSERT INTO `m_rel` VALUES ('3', '1', '3');
-INSERT INTO `m_rel` VALUES ('4', '2', '2');
-
--- ----------------------------
--- Table structure for m_sell
--- ----------------------------
-DROP TABLE IF EXISTS `m_sell`;
-CREATE TABLE `m_sell` (
-  `id` int(11) NOT NULL,
-  `g_id` int(11) DEFAULT NULL,
-  `count` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of m_sell
--- ----------------------------
-
--- ----------------------------
--- Table structure for m_store
--- ----------------------------
-DROP TABLE IF EXISTS `m_store`;
-CREATE TABLE `m_store` (
-  `id` int(11) NOT NULL,
-  `name` varchar(255) DEFAULT NULL,
-  `count` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of m_store
--- ----------------------------
-INSERT INTO `m_store` VALUES ('1', '苹果', '10');
-INSERT INTO `m_store` VALUES ('2', '香蕉', '10');
-INSERT INTO `m_store` VALUES ('3', '柠檬', '10');
 
 -- ----------------------------
 -- Table structure for news_article
