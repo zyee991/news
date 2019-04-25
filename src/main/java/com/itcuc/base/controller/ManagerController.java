@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -74,7 +75,7 @@ public class ManagerController {
         return "manager/edit";
     }
 
-    @RequestMapping("save")
+    @RequestMapping(value = "save",method = RequestMethod.POST)
     @ResponseBody
     public Result save(@RequestParam Map<String,String> paramMap) {
         Manager manager = managerService.save(paramMap);
@@ -83,5 +84,12 @@ public class ManagerController {
         } else {
             return Result.failure(ResultCode.USER_HAS_EXISTED);
         }
+    }
+
+    @RequestMapping(value = "remove",method = RequestMethod.POST)
+    @ResponseBody
+    public Result remove(@RequestParam String id) {
+        managerService.remove(id);
+        return Result.success();
     }
 }

@@ -85,29 +85,29 @@
     </form>
 </div>
 <script>
-    layui.use(['form','layer'], function(){
+    layui.use(['form', 'layer'], function () {
         $ = layui.jquery;
         var form = layui.form
-                ,layer = layui.layer;
+                , layer = layui.layer;
 
         //自定义验证规则
         form.verify({
-            username: function(value){
-                if(value.length < 4){
+            username: function (value) {
+                if (value.length < 4) {
                     return '用户名至少4个字符';
                 }
             }
-            ,pass: [/(.+){6,12}$/, '密码必须6到12位']
-            ,repass: function(value){
-                if($('#L_pass').val()!=$('#L_repass').val()){
+            , pass: [/(.+){6,12}$/, '密码必须6到12位']
+            , repass: function (value) {
+                if ($('#L_pass').val() != $('#L_repass').val()) {
                     return '两次密码不一致';
                 }
             }
         });
         var roleList = new Array();
-        form.on('checkbox(checkbox)', function(data){
+        form.on('checkbox(checkbox)', function (data) {
             var checked = data.elem.checked;
-            if(checked) {
+            if (checked) {
                 roleList.push(data.value); //复选框value值，也可以通过data.elem.value得到
             } else {
                 roleList.remove(data.value);
@@ -115,12 +115,12 @@
         });
 
         //监听提交
-        form.on('submit(add)', function(data){
+        form.on('submit(add)', function (data) {
             var param = data.field;
             param.roles = roleList.join(",");
-            $.post('save',param,function (result) {
-                if(result.code == 0) {
-                    layer.alert("增加成功", {icon: 6},function () {
+            $.post('save', param, function (result) {
+                if (result.code == 0) {
+                    layer.alert("增加成功", {icon: 6}, function () {
                         // 获得frame索引
                         var index = parent.layer.getFrameIndex(window.name);
                         //关闭当前frame

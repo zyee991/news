@@ -14,4 +14,6 @@ public interface ManagerService {
     void loadRoles(String id,Manager manager);
 
     Manager save(Map<String, String> paramMap);
+
+    void remove(String id);
 }

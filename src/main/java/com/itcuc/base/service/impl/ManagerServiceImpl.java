@@ -1,6 +1,5 @@
 package com.itcuc.base.service.impl;
 
-import com.google.common.collect.Lists;
 import com.itcuc.base.entity.Function;
 import com.itcuc.base.entity.Manager;
 import com.itcuc.base.entity.ManagerRole;
@@ -12,10 +11,6 @@ import com.itcuc.base.service.ManagerService;
 import com.itcuc.common.utils.EncryptUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -24,10 +19,12 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.Predicate;
 import javax.transaction.Transactional;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Service
-@CacheConfig(cacheNames = "manager")
 public class ManagerServiceImpl implements ManagerService {
 
     @Autowired
@@ -55,7 +52,6 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     @Transactional(rollbackOn = Exception.class)
-    @CacheEvict(allEntries = true)
     public Manager save(Map<String, String> paramMap) {
         String username = paramMap.get("new_username");
         String nickname = paramMap.get("new_nickname");
@@ -92,6 +88,11 @@ public class ManagerServiceImpl implements ManagerService {
         return manager;
     }
 
+    @Override
+    public void remove(String id) {
+        managerDao.deleteById(id);
+    }
+
     private void saveManagerRole(String rolesStr, Manager manager) {
         String[] roles = rolesStr.split(",");
         List<Role> roleList = new ArrayList<>();
@@ -108,7 +109,6 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    @Cacheable(key = "#p0")
     public Manager findById(String id) {
         Manager manager = managerDao.findById(id).get();
         loadRoles(manager.getId(),manager);
@@ -143,7 +143,6 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    @CachePut(key = "#p0",value = "manager")
     public void update(String id,Manager manager) {
         managerDao.save(manager);
     }
