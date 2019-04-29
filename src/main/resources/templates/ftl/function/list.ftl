@@ -26,54 +26,49 @@
         <i class="layui-icon" style="line-height:30px">ဂ</i></a>
 </div>
 <div class="x-body">
-    <table id="data" lay-filter="mlist">
-
+    <table id="data" lay-filter="flist">
     </table>
 </div>
 <script>
-    layui.use('table', function () {
-        var table = layui.table;
-        table.render({
-            elem: "#data",
-            cols: [[
-                {field: 'id', hide: true},
-                {width: '10%', field: 'username', title: '用户名'},
-                {width: '10%', field: 'nickname', title: '昵称', edit: 'text'},
+    layui.config({
+        base: '/lib/',
+    })
+    layui.use('treeTable', function () {
+        var treeTable = layui.treeTable;
+        var	re = treeTable.render({
+            elem: '#data',
+            url: 'data',
+            icon_key: 'title',
+            cols: [
                 {
-                    width: '10%', title: '登录时间', templet: function (d) {
-                        var timestrap = new Date(d.loginTime);
-                        return timestrap.toLocaleString();
-                    }
-                },
-                {width: '10%', field: 'loginAddr', title: '登录地址'},
-                {
-                    width: '10%', title: '状态', templet: function (d) {
-                        if (d.state == 1) {
-                            return "<span class=\"layui-btn layui-btn-normal layui-btn-mini\">已启用</span>";
-                        } else {
-                            return "<span class=\"layui-btn layui-btn-normal layui-btn-mini layui-btn-disabled\">已停用</span>";
+                    key: 'name',
+                    title: '名称',
+                    width: '100px',
+                    template: function(item){
+                        if(item.level == 0){
+                            return '<span style="color:red;">'+item.title+'</span>';
+                        }else if(item.level == 1){
+                            return '<span style="color:green;">'+item.title+'</span>';
+                        }else if(item.level == 2){
+                            return '<span style="color:#aaa;">'+item.title+'</span>';
                         }
                     }
                 },
                 {
-                    width: '40%', title: '角色', templet: function (d) {
-                        var roles = d.roles;
-                        var ele = new Array();
-                        for (var i = 0; i < roles.length; i++) {
-                            ele.push("<span class=\"layui-btn layui-btn-mini\">" + roles[i].name + "</span>");
-                        }
-                        return ele.join("");
-                    }
+                    key: 'url',
+                    title: 'url',
+                    width: '100px',
+                    align: 'center'
                 },
-                {width: '10%', title: '操作', toolbar: '#operateBar'}
-            ]],
-            url: "data",
-            page: true,
-            toolbar: "#titleBar",
-            even: true,
+                {
+                    title: '操作',
+                    align: 'center',
+                    toolBar: '#operateBar'
+                }
+            ],
         });
 
-        table.on('tool(mlist)', function (obj) { //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+        treeTable.on('tool(flist)', function (obj) { //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
             var data = obj.data; //获得当前行数据
             var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
             var tr = obj.tr; //获得当前行 tr 的DOM对象
@@ -95,7 +90,7 @@
             }
         });
 
-        table.on('toolbar(mlist)', function (obj) {
+        treeTable.on('toolbar(flist)', function (obj) {
             var layEvent = obj.event;
             if (layEvent === 'add') { //查看
                 x_admin_show('新增', 'add', 600, 400);

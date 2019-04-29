@@ -30,9 +30,13 @@ public class ManagerController {
     @Autowired
     HttpServletRequest request;
 
+    private static final String VIEW_LIST = "manager/list";
+    private static final String VIEW_ADD = "manager/add";
+    private static final String VIEW_EDIT = "manager/edit";
+
     @RequestMapping("list")
     public String list() {
-        return "manager/list";
+        return VIEW_LIST;
     }
 
     @RequestMapping("data")
@@ -54,7 +58,7 @@ public class ManagerController {
     public String add(ModelMap map) {
         List<Role> roles = roleService.queryAll();
         map.put("roles",roles);
-        return "manager/add";
+        return VIEW_ADD;
     }
 
     @RequestMapping("edit")
@@ -72,7 +76,7 @@ public class ManagerController {
             }
             map.put("roles",roles);
         }
-        return "manager/edit";
+        return VIEW_EDIT;
     }
 
     @RequestMapping(value = "save",method = RequestMethod.POST)

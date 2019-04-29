@@ -5,6 +5,9 @@ import org.springframework.data.domain.Page;
 
 import java.util.Map;
 
+/**
+ * @author zy
+ */
 public interface ManagerService {
     Manager findById(String id);
     Manager findByUsername(String username);
