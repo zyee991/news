@@ -26,54 +26,47 @@
         <i class="layui-icon" style="line-height:30px">ဂ</i></a>
 </div>
 <div class="x-body">
-    <table id="data" lay-filter="flist">
+    <table id="treeTable" lay-filter="flist">
     </table>
 </div>
 <script>
+    var editObj = null, ptable = null, treeGrid = null, tableId = 'treeTable', layer = null;
     layui.config({
-        base: '/lib/',
-    })
-    layui.use('treeTable', function () {
-        var treeTable = layui.treeTable;
-        var	re = treeTable.render({
-            elem: '#data',
-            url: 'data',
-            icon_key: 'title',
-            cols: [
-                {
-                    key: 'name',
-                    title: '名称',
-                    width: '100px',
-                    template: function(item){
-                        if(item.level == 0){
-                            return '<span style="color:red;">'+item.title+'</span>';
-                        }else if(item.level == 1){
-                            return '<span style="color:green;">'+item.title+'</span>';
-                        }else if(item.level == 2){
-                            return '<span style="color:#aaa;">'+item.title+'</span>';
-                        }
-                    }
-                },
-                {
-                    key: 'url',
-                    title: 'url',
-                    width: '100px',
-                    align: 'center'
-                },
-                {
-                    title: '操作',
-                    align: 'center',
-                    toolBar: '#operateBar'
-                }
-            ],
+        base: '/lib/'
+    }).extend({
+        treeGrid: 'treeGrid'
+    }).use(['jquery', 'treeGrid', 'layer'], function () {
+        var $ = layui.jquery;
+        treeGrid = layui.treeGrid;//很重要
+        layer = layui.layer;
+        ptable = treeGrid.render({
+            id: tableId
+            , elem: '#' + tableId
+            , url: 'data'
+            , cellMinWidth: 100
+            , idField: 'id'//必須字段
+            , treeId: 'id'//树形id字段名称
+            , treeUpId: 'parentId'//树形父id字段名称
+            , treeShowName: 'name'//以树形式显示的字段
+            , height: '100%'
+            , isFilter: false
+            , iconOpen: false//是否显示图标【默认显示】
+            , isOpenDefault: false//节点默认是展开还是折叠【默认展开】
+            , loading: true
+            , method: 'post'
+            , isPage: false
+            , cols: [[
+                {type: 'numbers'}
+                , {field: 'name', title: '名称', sort: true}
+                , {field: 'url', title: 'url', sort: true}
+                , {title: '操作', align: 'center', toolbar: '#operateBar'}
+            ]],
+            toolbar: "#titleBar"
         });
 
-        treeTable.on('tool(flist)', function (obj) { //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
-            var data = obj.data; //获得当前行数据
-            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
-            var tr = obj.tr; //获得当前行 tr 的DOM对象
-
-            if (layEvent === 'del') { //删除
+        treeGrid.on('tool(flist)', function (obj) {
+            console.log(obj.event)
+            if (obj.event === 'del') {//删除行
                 layer.confirm('确定删除？', function (index) {
                     $.post("remove", {id: data.id}, function (result) {
                         if (result.code == '0') {
@@ -84,19 +77,100 @@
                     layer.close(index);
                     //向服务端发送删除指令
                 });
-            } else if (layEvent === 'edit') { //编辑
-                //do something
-                x_admin_show('编辑', 'edit?id=' + data.id, 600, 400);
+            } else if (obj.event === "edit") {//编辑
+
+            } else if (obj.event === "add") {
+                x_admin_show('新增', 'add?parentId=abstract', 600, 400);
             }
         });
 
-        treeTable.on('toolbar(flist)', function (obj) {
+        treeGrid.on('toolbar(mlist)', function (obj) {
             var layEvent = obj.event;
             if (layEvent === 'add') { //查看
-                x_admin_show('新增', 'add', 600, 400);
+                x_admin_show('新增', 'add?parentId=abstract', 600, 400);
             }
         });
-    })
+    });
+
+    var i = 1000000;
+
+    //添加
+    function add(pObj) {
+        var pdata = pObj ? pObj.data : null;
+        var param = {};
+        param.name = '水果' + Math.random();
+        param.id = ++i;
+        param.pId = pdata ? pdata.id : null;
+        treeGrid.addRow(tableId, pdata ? pdata[treeGrid.config.indexName] + 1 : 0, param);
+    }
+
+    function print() {
+        console.log(treeGrid.cache[tableId]);
+        msg("对象已打印，按F12，在控制台查看！");
+    }
+
+    function msg(msg) {
+        var loadIndex = layer.msg(msg, {
+            time: 3000
+            , offset: 'b'//顶部
+            , shade: 0
+        });
+    }
+
+    function openorclose() {
+        var map = treeGrid.getDataMap(tableId);
+        var o = map['102'];
+        treeGrid.treeNodeOpen(tableId, o, !o[treeGrid.config.cols.isOpen]);
+    }
+
+
+    function openAll() {
+        var treedata = treeGrid.getDataTreeList(tableId);
+        treeGrid.treeOpenAll(tableId, !treedata[0][treeGrid.config.cols.isOpen]);
+    }
+
+    function getCheckData() {
+        var checkStatus = treeGrid.checkStatus(tableId)
+                , data = checkStatus.data;
+        layer.alert(JSON.stringify(data));
+    }
+
+    function radioStatus() {
+        var data = treeGrid.radioStatus(tableId)
+        layer.alert(JSON.stringify(data));
+    }
+
+    function getCheckLength() {
+        var checkStatus = treeGrid.checkStatus(tableId)
+                , data = checkStatus.data;
+        layer.msg('选中了：' + data.length + ' 个');
+    }
+
+    function reload() {
+        treeGrid.reload(tableId, {
+            page: {
+                curr: 1
+            }
+        });
+    }
+
+    function query() {
+        treeGrid.query(tableId, {
+            where: {
+                name: 'sdfsdfsdf'
+            }
+        });
+    }
+
+    function test() {
+        console.log(treeGrid.cache[tableId], treeGrid.getClass(tableId));
+
+
+        /*var map=treeGrid.getDataMap(tableId);
+        var o= map['102'];
+        o.name="更新";
+        treeGrid.updateRow(tableId,o);*/
+    }
 </script>
 <script type="text/html" id="operateBar">
     <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>

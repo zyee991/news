@@ -89,8 +89,10 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
+    @Transactional(rollbackOn = Exception.class)
     public void remove(String id) {
         managerDao.deleteById(id);
+        managerRoleDao.deleteByManagerId(id);
     }
 
     private void saveManagerRole(String rolesStr, Manager manager) {
@@ -143,6 +145,7 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
+    @Transactional(rollbackOn = Exception.class)
     public void update(String id,Manager manager) {
         managerDao.save(manager);
     }

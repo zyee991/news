@@ -36,4 +36,11 @@ public class FunctionController {
         List<Function> functionList = functionService.queryAll();
         return functionList == null ? Result.failure(ResultCode.RESULE_DATA_NONE) : Result.success(functionList);
     }
+
+    @RequestMapping("remove")
+    @ResponseBody
+    public Result remove(String id) {
+        functionService.remove(id);
+        return Result.success();
+    }
 }
