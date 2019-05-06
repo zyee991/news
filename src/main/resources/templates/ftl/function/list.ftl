@@ -65,120 +65,34 @@
         });
 
         treeGrid.on('tool(flist)', function (obj) {
-            console.log(obj.event)
+            var id = obj.data.id;
             if (obj.event === 'del') {//删除行
                 layer.confirm('确定删除？', function (index) {
-                    $.post("remove", {id: data.id}, function (result) {
+                    obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                    layer.close(index);
+                    //向服务端发送删除指令
+                    $.post("remove", {id: id}, function (result) {
                         if (result.code == '0') {
                             layer.msg('已删除!', {icon: 1, time: 1000})
                         }
                     })
-                    obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
-                    layer.close(index);
-                    //向服务端发送删除指令
                 });
             } else if (obj.event === "edit") {//编辑
-
+                x_admin_show('编辑', 'edit?id=' + id, 600, 400);
             } else if (obj.event === "add") {
-                x_admin_show('新增', 'add?parentId=abstract', 600, 400);
-            }
-        });
-
-        treeGrid.on('toolbar(mlist)', function (obj) {
-            var layEvent = obj.event;
-            if (layEvent === 'add') { //查看
-                x_admin_show('新增', 'add?parentId=abstract', 600, 400);
+                x_admin_show('新增', 'add?parentId=' + id, 600, 400);
             }
         });
     });
-
-    var i = 1000000;
-
-    //添加
-    function add(pObj) {
-        var pdata = pObj ? pObj.data : null;
-        var param = {};
-        param.name = '水果' + Math.random();
-        param.id = ++i;
-        param.pId = pdata ? pdata.id : null;
-        treeGrid.addRow(tableId, pdata ? pdata[treeGrid.config.indexName] + 1 : 0, param);
-    }
-
-    function print() {
-        console.log(treeGrid.cache[tableId]);
-        msg("对象已打印，按F12，在控制台查看！");
-    }
-
-    function msg(msg) {
-        var loadIndex = layer.msg(msg, {
-            time: 3000
-            , offset: 'b'//顶部
-            , shade: 0
-        });
-    }
-
-    function openorclose() {
-        var map = treeGrid.getDataMap(tableId);
-        var o = map['102'];
-        treeGrid.treeNodeOpen(tableId, o, !o[treeGrid.config.cols.isOpen]);
-    }
-
-
-    function openAll() {
-        var treedata = treeGrid.getDataTreeList(tableId);
-        treeGrid.treeOpenAll(tableId, !treedata[0][treeGrid.config.cols.isOpen]);
-    }
-
-    function getCheckData() {
-        var checkStatus = treeGrid.checkStatus(tableId)
-                , data = checkStatus.data;
-        layer.alert(JSON.stringify(data));
-    }
-
-    function radioStatus() {
-        var data = treeGrid.radioStatus(tableId)
-        layer.alert(JSON.stringify(data));
-    }
-
-    function getCheckLength() {
-        var checkStatus = treeGrid.checkStatus(tableId)
-                , data = checkStatus.data;
-        layer.msg('选中了：' + data.length + ' 个');
-    }
-
-    function reload() {
-        treeGrid.reload(tableId, {
-            page: {
-                curr: 1
-            }
-        });
-    }
-
-    function query() {
-        treeGrid.query(tableId, {
-            where: {
-                name: 'sdfsdfsdf'
-            }
-        });
-    }
-
-    function test() {
-        console.log(treeGrid.cache[tableId], treeGrid.getClass(tableId));
-
-
-        /*var map=treeGrid.getDataMap(tableId);
-        var o= map['102'];
-        o.name="更新";
-        treeGrid.updateRow(tableId,o);*/
-    }
 </script>
 <script type="text/html" id="operateBar">
+    <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="add">新增</a>
     <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 </script>
 <script type="text/html" id="titleBar">
     <div class="layui-btn-container">
-        <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="add">新增</a>
+        <a class="layui-btn layui-btn-normal layui-btn-xs" onclick="x_admin_show('新增', 'add?parentId=abstract', 600, 400);">新增</a>
     </div>
 </script>
 </body>

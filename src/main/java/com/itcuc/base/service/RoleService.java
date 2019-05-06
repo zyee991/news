@@ -5,6 +5,6 @@ import com.itcuc.base.entity.Role;
 import java.util.List;
 
 public interface RoleService {
-    List<Role> queryAll();
+    List<Role> findAll();
     //TODO
 }

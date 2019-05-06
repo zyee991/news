@@ -56,7 +56,7 @@ public class ManagerController {
 
     @RequestMapping("add")
     public String add(ModelMap map) {
-        List<Role> roles = roleService.queryAll();
+        List<Role> roles = roleService.findAll();
         map.put("roles",roles);
         return VIEW_ADD;
     }
@@ -64,7 +64,7 @@ public class ManagerController {
     @RequestMapping("edit")
     public String edit(@RequestParam String id, ModelMap map) {
         Manager manager = managerService.findById(id);
-        List<Role> roles = roleService.queryAll();
+        List<Role> roles = roleService.findAll();
         if(manager != null) {
             map.put("manager",manager);
             for(Role role:roles) {

@@ -26,53 +26,37 @@
     <form class="layui-form">
         <input type="hidden" name="saveType" value="add"/>
         <div class="layui-form-item">
-            <label for="L_username" class="layui-form-label">
-                <span class="x-red">*</span>用户名
+            <label for="parentId" class="layui-form-label">
+                <span class="x-red">*</span>父菜单
             </label>
             <div class="layui-input-inline">
-                <input type="text" id="L_username" name="new_username" required="" lay-verify="username" value=""
-                       autocomplete="off" class="layui-input"/>
-            </div>
-            <div class="layui-form-mid layui-word-aux">
-                <span class="x-red">*</span>将会成为您唯一的登入名
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label for="L_nickname" class="layui-form-label">
-                <span class="x-red">*</span>昵称
-            </label>
-            <div class="layui-input-inline">
-                <input type="text" id="L_nickname" name="new_nickname" required="" lay-verify="nickname" value=""
-                       autocomplete="off" class="layui-input"/>
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label for="L_pass" class="layui-form-label">
-                <span class="x-red">*</span>密码
-            </label>
-            <div class="layui-input-inline">
-                <input type="password" id="L_pass" name="new_password" required="" lay-verify="pass" value=""
-                       autocomplete="off" class="layui-input">
-            </div>
-            <div class="layui-form-mid layui-word-aux">
-                6到16个字符
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label for="L_repass" class="layui-form-label">
-                <span class="x-red">*</span>确认密码
-            </label>
-            <div class="layui-input-inline">
-                <input type="password" id="L_repass" name="new_repass" required="" lay-verify="repass" value=""
-                       autocomplete="off" class="layui-input">
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label"><span class="x-red">*</span>角色</label>
-            <div class="layui-input-block">
-                <#list roles as role>
-                    <input lay-filter="checkbox" type="checkbox" name="roles" title="${role.name}" value="${role.id}">
+                <select id="parentId" name="parentId" lay-verify="parentId">
+                <#list functionList as function>
+                    <#if function.id == parentId>
+                    <option selected value="${function.id}">${function.name}</option>
+                    <#else>
+                    <option value="${function.id}">${function.name}</option>
+                    </#if>
                 </#list>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="name" class="layui-form-label">
+                <span class="x-red">*</span>名称
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="name" name="name" required="" lay-verify="name" value=""
+                       autocomplete="off" class="layui-input"/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="url" class="layui-form-label">
+                <span class="x-red">*</span>url
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="url" name="url" required="" lay-verify="url" value=""
+                       autocomplete="off" class="layui-input"/>
             </div>
         </div>
         <div class="layui-form-item">
@@ -90,32 +74,21 @@
 
         //自定义验证规则
         form.verify({
-            username: function (value) {
-                if (value.length < 4) {
-                    return '用户名至少4个字符';
+            name: function (value) {
+                if (!value) {
+                    return '名称不能为空';
                 }
             }
-            , pass: [/(.+){6,12}$/, '密码必须6到12位']
-            , repass: function (value) {
-                if ($('#L_pass').val() != $('#L_repass').val()) {
-                    return '两次密码不一致';
+            , url: function (value) {
+                if (!value) {
+                    return 'url不能为空';
                 }
-            }
-        });
-        var roleList = new Array();
-        form.on('checkbox(checkbox)', function (data) {
-            var checked = data.elem.checked;
-            if (checked) {
-                roleList.push(data.value); //复选框value值，也可以通过data.elem.value得到
-            } else {
-                roleList.remove(data.value);
             }
         });
 
         //监听提交
         form.on('submit(add)', function (data) {
             var param = data.field;
-            param.roles = roleList.join(",");
             $.post('save', param, function (result) {
                 if (result.code == 0) {
                     layer.alert("增加成功", {icon: 6}, function () {
